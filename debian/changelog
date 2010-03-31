@@ -1,4 +1,4 @@
-filetransferdaemon (0.50.20) estelle; urgency=low
+filetransferdaemon (0.50.20) claire estelle; urgency=low
 
   * Rebuilt against libtorrent 0.14.10
   * Fix for cancel bug in some instances
