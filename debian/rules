@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+  
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+include /usr/share/cdbs/1/rules/utils.mk
+# Add here any variable or target overrides you need.
+DEB_MAKE_CLEAN_TARGET   = clean
+DEB_MAKE_BUILD_TARGET   = all
+DEB_DH_INSTALLINIT_ARGS = --restart-after-upgrade
+DEB_MAKE_ENVVARS        = VERSION="$(DEB_VERSION)" CFGPATH="/etc/ftd/ftdconfig.ini"
+
+binary-install/filetransferdaemon::
+	install --mode=0700 ftd debian/filetransferdaemon/usr/sbin/ftd
+	install --mode=0755 ftdclient debian/filetransferdaemon/usr/bin/ftdclient
+	install --mode=0644 ftdconfig.ini debian/filetransferdaemon/usr/share/ftd/ftdconfig.default
+	install --mode=0644 php/ipc.php debian/filetransferdaemon/usr/share/ftd/ipc.php
+	install --mode=0700 upload.cgi debian/filetransferdaemon/usr/lib/cgi-bin/upload.cgi

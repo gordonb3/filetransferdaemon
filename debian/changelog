@@ -1,0 +1,135 @@
+filetransferdaemon (0.50.20) estelle; urgency=low
+
+  * Rebuilt against libtorrent 0.14.10
+  * Fix for cancel bug in some instances
+  * Fix for integer value out of range in set up/down throttle 
+
+ -- Tor Krill <tor@excito.com>  Wed, 31 Mar 2010 11:01:04 +0200
+
+filetransferdaemon (0.50.19) estelle; urgency=low
+
+  [ Tor Krill ]
+  * Fixed formatting of content length string
+  * Caught more exceptions
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 04 Nov 2009 12:20:38 +0100
+
+filetransferdaemon (0.50.18) claire estelle; urgency=low
+
+  * Target right suites
+
+ -- Tor Krill <tor@excito.com>  Thu, 22 Oct 2009 14:33:16 +0200
+
+filetransferdaemon (0.50.17) estelle; urgency=low
+
+  * Rebuild against newer libeutils 
+
+ -- Tor Krill <tor@excito.com>  Thu, 22 Oct 2009 14:24:59 +0200
+
+filetransferdaemon (0.50.16) estelle; urgency=low
+
+  * Hopefully resolved most issues with afp. 
+  * Rewritten parts of add download 
+
+ -- Tor Krill <tor@excito.com>  Thu, 27 Aug 2009 22:43:42 +0200
+
+filetransferdaemon (0.50.15) estelle; urgency=low
+
+  * Rebuild target right dist. (Jaunty->Estelle)
+
+ -- Tor Krill <tor@excito.com>  Mon, 24 Aug 2009 14:56:07 +0200
+
+filetransferdaemon (0.50.14) jaunty; urgency=low
+
+  * Don't remove "torrentfiles" added by DirWatcher. They might be other files :( 
+
+ -- Tor Krill <tor@excito.com>  Mon, 24 Aug 2009 14:37:49 +0200
+
+filetransferdaemon (0.50.13) estelle; urgency=low
+
+  * Fix ownership on uploaded files before moving into final position
+  * Catch new exception "Invalid torrent file" hopefully fixing crashes with afp etc.
+  * Upgrade to latest libtorrent 
+
+ -- Tor Krill <tor@excito.com>  Thu, 20 Aug 2009 19:19:48 +0200
+
+filetransferdaemon (0.50.12) estelle; urgency=low
+
+  * fix typo in changelog
+
+ -- Tor Krill <tor@excito.com>  Fri,  3 Jul 2009 10:50:38 +0200
+
+filetransferdaemon (0.50.11) estelle; urgency=low
+
+  * Masked off progress notification from alerts
+  * Change logging of unknown alerts to debug ones
+
+ -- Tor Krill <tor@excito.com>  Fri, 03 Jul 2009 10:45:27 +0200
+
+filetransferdaemon (0.50.10) estelle; urgency=low
+
+  * Lower prio on performance alert to not spam syslog
+
+ -- Tor Krill <tor@excito.com>  Fri, 26 Jun 2009 15:59:44 +0200
+
+filetransferdaemon (0.50.9) estelle; urgency=low
+
+  * set right codename for package
+
+ -- Tor Krill <tor@excito.com>  Fri, 26 Jun 2009 15:27:21 +0200
+
+filetransferdaemon (0.50.8) jaunty; urgency=low
+
+  * Added more adaptations for new libtorrent
+  * Added constructor for session to stop upnp/natpmp etc to start 
+
+ -- Tor Krill <tor@excito.com>  Fri, 26 Jun 2009 15:17:50 +0200
+
+filetransferdaemon (0.50.7) estelle; urgency=low
+
+  * Bump again. Rebuilt against new libtorrent 
+
+ -- Tor Krill <tor@excito.com>  Fri, 26 Jun 2009 12:49:10 +0200
+
+filetransferdaemon (0.50.6) estelle; urgency=low
+
+  * Rebuild against an up2date system 
+
+ -- Tor Krill <tor@excito.com>  Wed, 24 Jun 2009 16:40:52 +0200
+
+filetransferdaemon (0.50.5) estelle; urgency=low
+
+  * Experimental build against libtorrent 0.14.4 
+
+ -- Tor Krill <tor@excito.com>  Tue, 23 Jun 2009 13:55:15 +0200
+
+filetransferdaemon (0.50.4) estelle; urgency=low
+
+  * Add conflicts to avoid parallell install with older ftd package 
+
+ -- Tor Krill <tor@excito.com>  Wed, 17 Jun 2009 14:06:04 +0200
+
+filetransferdaemon (0.50.3) estelle; urgency=low
+
+  * Added permissions fix for storage and web folders
+
+ -- Tor Krill <tor@excito.com>  Fri, 12 Jun 2009 17:10:19 +0200
+
+filetransferdaemon (0.50.2) estelle; urgency=low
+
+  * Add cancel if we detect that destination is unwritable. 
+
+ -- Tor Krill <tor@excito.com>  Fri, 12 Jun 2009 16:01:56 +0200
+
+filetransferdaemon (0.50.1) claire; urgency=low
+
+  * Fixes for buffer parse (Missing null ending)
+  * Fixes for upload 
+
+ -- Tor Krill <tor@excito.com>  Thu, 11 Jun 2009 23:30:28 +0200
+
+filetransferdaemon (0.50.0) claire; urgency=low
+
+  * Initial release with new name.
+
+ -- Tor Krill <tor@excito.com>  Thu, 11 Jun 2009 14:52:14 +0200
