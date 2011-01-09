@@ -653,19 +653,25 @@ Json::Value TorrentDownloader::GetInfo(){
 
 
 void TorrentDownloader::StartDownload(){
-	syslog(LOG_INFO,"Starting download of torrent");
 
-	downloader=CurlDownloadManager::Instance().GetDownloader();
+	if(this->url.Scheme()=="magnet"){
+		syslog(LOG_INFO,"Adding magnet link");
 
-	downloader->SignalDone.connect(sigc::mem_fun(this,&TorrentDownloader::HttpDone));
-	downloader->SignalFailed.connect(sigc::mem_fun(this,&TorrentDownloader::HttpFailed));
-	downloader->SetUrl(this->GetUrl());
-	downloader->SetStream(&m_dlstream);
+	}else{
+		syslog(LOG_INFO,"Starting download of torrent");
 
-	this->status=QUEUED;
-	this->tip=true;
+		downloader=CurlDownloadManager::Instance().GetDownloader();
 
-	downloader->StartDownload();
+		downloader->SignalDone.connect(sigc::mem_fun(this,&TorrentDownloader::HttpDone));
+		downloader->SignalFailed.connect(sigc::mem_fun(this,&TorrentDownloader::HttpFailed));
+		downloader->SetUrl(this->GetUrl());
+		downloader->SetStream(&m_dlstream);
+
+		this->status=QUEUED;
+		this->tip=true;
+
+		downloader->StartDownload();
+	}
 }
 
 /*

@@ -2,15 +2,15 @@ Source: filetransferdaemon
 Section: net
 Priority: extra
 Maintainer: Tor Krill <tor@excito.com>
-Uploaders: Carl Fürstenberg <carl@excito.com>, Tor Krill <tor@excito.com>
-Build-Depends: cdbs, 
- debhelper (>= 6), 
+Uploaders: Carl Fürstenberg <carl@excito.com>
+Build-Depends: debhelper (>= 7.2), 
  libeutils-dev, 
  libsigc++-2.0-dev, 
  libtorrent-rasterbar-dev, 
  libpopt-dev, 
- libboost-system1.37-dev
-Standards-Version: 3.8.0
+ libboost-system-dev,
+ libcurl4-dev 
+Standards-Version: 3.8.4
 
 Package: filetransferdaemon
 Architecture: any

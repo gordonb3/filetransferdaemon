@@ -1,8 +1,8 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          ftd
-# Required-Start:    $networking
-# Required-Stop:     $networking
+# Required-Start:    $remote_fs $networking $syslog
+# Required-Stop:     $remote_fs $networking $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: File Transfer Daeomon

@@ -135,15 +135,15 @@ int main(int argc,char** argv){
 	int daemonize=0;
 	int version=0;
 	const char* group="www-data";
-	openlog("ftd",LOG_PERROR,LOG_DAEMON);
-	// Set logmask, default is LOG_NOTICE (5)
-	setlogmask(LOG_UPTO( FtdConfig::Instance().GetIntegerOrDefault("general","loglevel",5)));
-
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGINT, sighandler);
-	signal(SIGTERM,sighandler);
 
 	try {
+		openlog("ftd",LOG_PERROR,LOG_DAEMON);
+		// Set logmask, default is LOG_NOTICE (5)
+		setlogmask(LOG_UPTO( FtdConfig::Instance().GetIntegerOrDefault("general","loglevel",5)));
+
+		signal(SIGPIPE, SIG_IGN);
+		signal(SIGINT, sighandler);
+		signal(SIGTERM,sighandler);
 
 		poptContext optCon;
 		struct poptOption opts[]={

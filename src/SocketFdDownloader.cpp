@@ -71,7 +71,6 @@ void SocketFdDownloader::FilterFields(const string& field){
 
 void SocketFdDownloader::Run(){
 
-	// double dltot=0;
 	char buf[128];
 	char boundary[128];
 	bool err=false;
@@ -104,9 +103,6 @@ void SocketFdDownloader::Run(){
 
 			long long content_length=atoll(buf);
 			sock.Send("!",1);
-
-			//uid_t myid=getuid();
-			//gid_t mygid=getgid();
 
 			if( 1 /* setegid(this->group)==0*/ ){
 				syslog(LOG_DEBUG,"Group changed");
@@ -156,16 +152,7 @@ void SocketFdDownloader::Run(){
 				syslog(LOG_ERR,"Error setting user(%m)");
 				err=true;
 			}
-			/*
-			syslog(LOG_DEBUG,"Restore uid and gid");
-			if(seteuid(myid)){
-				syslog(LOG_ERR,"Failed to change uid: %m");
-			}
-			if(setegid(mygid)){
-				syslog(LOG_ERR,"Failed to change gid: %m");
-			}
-			syslog(LOG_DEBUG,"Restore uid and gid, done");
-			*/
+
 		}
 	}catch(runtime_error* e){
 		syslog(LOG_ERR, "Caught exception: %s",e->what() );

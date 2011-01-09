@@ -1,17 +1,36 @@
 #!/usr/bin/make -f
-  
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/makefile.mk
-include /usr/share/cdbs/1/rules/utils.mk
-# Add here any variable or target overrides you need.
-DEB_MAKE_CLEAN_TARGET   = clean
-DEB_MAKE_BUILD_TARGET   = all
-DEB_DH_INSTALLINIT_ARGS = --restart-after-upgrade
-DEB_MAKE_ENVVARS        = VERSION="$(DEB_VERSION)" CFGPATH="/etc/ftd/ftdconfig.ini"
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+DEB_VERSION="$(shell dpkg-parsechangelog | awk '/^Version:/ {print $$NF}')"
 
-binary-install/filetransferdaemon::
-	install --mode=0700 ftd debian/filetransferdaemon/usr/sbin/ftd
-	install --mode=0755 ftdclient debian/filetransferdaemon/usr/bin/ftdclient
-	install --mode=0644 ftdconfig.ini debian/filetransferdaemon/usr/share/ftd/ftdconfig.default
-	install --mode=0644 php/ipc.php debian/filetransferdaemon/usr/share/ftd/ipc.php
-	install --mode=0700 upload.cgi debian/filetransferdaemon/usr/lib/cgi-bin/upload.cgi
+%:
+	dh  $@
+
+override_dh_installinit:
+	dh_installinit --restart-after-upgrade
+
+override_dh_auto_build:
+	dh_auto_build -- VERSION="$(DEB_VERSION)" CFGPATH="/etc/ftd/ftdconfig.ini" 
+
+
+# Use override_dh_* targets to customize this.
+# ---------------------------------------------------
+# Followings are the old debian/rules
+#
+# #!/usr/bin/make -f
+#   
+# include /usr/share/cdbs/1/rules/debhelper.mk
+# include /usr/share/cdbs/1/class/makefile.mk
+# include /usr/share/cdbs/1/rules/utils.mk
+# # Add here any variable or target overrides you need.
+# DEB_MAKE_CLEAN_TARGET   = clean
+# DEB_MAKE_BUILD_TARGET   = all
+# DEB_DH_INSTALLINIT_ARGS = --restart-after-upgrade
+# DEB_MAKE_ENVVARS        = VERSION="$(DEB_VERSION)" CFGPATH="/etc/ftd/ftdconfig.ini"
+# 
+# binary-install/filetransferdaemon::
+# 	install --mode=0700 ftd debian/filetransferdaemon/usr/sbin/ftd
+# 	install --mode=0755 ftdclient debian/filetransferdaemon/usr/bin/ftdclient
+# 	install --mode=0644 ftdconfig.ini debian/filetransferdaemon/usr/share/ftd/ftdconfig.default
+# 	install --mode=0644 php/ipc.php debian/filetransferdaemon/usr/share/ftd/ipc.php
+# 	install --mode=0700 upload.cgi debian/filetransferdaemon/usr/lib/cgi-bin/upload.cgi

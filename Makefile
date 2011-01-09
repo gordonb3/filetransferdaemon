@@ -27,16 +27,19 @@ UPLOAD_CGI_SRC= upload.cpp \
 
 VPATH = src
 
-VERSION ?= 
-CFGPATH ?= ./ftdconfig.ini
+VERSION ?= unknown
+CFGPATH ?= $(CURDIR)/ftdconfig.ini
 
 CXXFLAGS_EXTRA = -g -D_FILE_OFFSET_BITS=64  -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -Wall  -DUSECOMPAT\
 				 -DPACKAGE_VERSION="\"$(VERSION)\"" -DCFGPATH="\"$(CFGPATH)\"" \
-				 $(shell pkg-config --cflags libeutils libtorrent-rasterbar sigc++-2.0)
+				 $(shell pkg-config --cflags libeutils libtorrent-rasterbar sigc++-2.0 libcurl)
 				 #-Wextra -Wold-style-cast -Woverloaded-virtual -Wsign-promo
  
-LD_LIBTORRENT=-Wl,-Bstatic $(shell pkg-config --libs libtorrent-rasterbar) \
-				-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt -Wl,-Bdynamic
+#LD_LIBTORRENT=-Wl,-Bstatic $(shell pkg-config --libs libtorrent-rasterbar geoip libssl) \
+				#-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt -Wl,-Bdynamic
+
+LD_LIBTORRENT= $(shell pkg-config --libs libtorrent-rasterbar) \
+				-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt
 
 LDFLAGS_EXTRA = $(shell pkg-config --libs libeutils sigc++-2.0) $(shell curl-config --libs) -lpopt
 

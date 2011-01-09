@@ -1,3 +1,26 @@
+filetransferdaemon (0.50.23) vincent hugo; urgency=low
+
+  * Clean up some dead code
+  * Initial work on magnet links
+  * Rework upload.cgi to return json instead of html
+  * Rewrite parts of the makefile to easier allow debug 
+
+ -- Tor Krill <tor@excito.com>  Sun, 09 Jan 2011 21:43:14 +0100
+
+filetransferdaemon (0.50.22) vincent; urgency=low
+
+  * adding deps on curl 
+
+ -- Carl Fürstenberg <carl@excito.com>  Thu, 10 Jun 2010 14:02:30 +0200
+
+filetransferdaemon (0.50.21) vincent; urgency=low
+
+  * drop cdbs
+  * new source format
+  * link dynamic (much easier imo)
+
+ -- Carl Fürstenberg <carl@excito.com>  Thu, 10 Jun 2010 13:43:48 +0200
+
 filetransferdaemon (0.50.20) claire estelle; urgency=low
 
   * Rebuilt against libtorrent 0.14.10

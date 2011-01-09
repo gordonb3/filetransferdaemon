@@ -22,6 +22,7 @@
    $Id: upload.cpp 2011 2008-10-13 21:05:02Z tor $
    */
 
+#include <sstream>
 #include <iostream>
 #include <string>
 #include <map>
@@ -41,6 +42,7 @@
 #ifdef DMALLOC
 #include <dmalloc.h>
 #endif
+
 
 extern char **environ;
 
@@ -88,9 +90,9 @@ static Json::Value ReadJsonValue(UnixClientSocket& sock){
 
 int main (int argc, char *argv[]) {
 
-	cout << "Content-type: text/html"<<endl<<endl;
-	cout << "<html><head></head><body>"<<endl<<flush;
-
+	cout << "Content-type: application/json"<<endl<<endl;
+	Json::Value res;
+	res["result"]=true;
 #ifdef DEBUG
 	map<string,string> env;
 	parse_environ(env);
@@ -103,16 +105,21 @@ int main (int argc, char *argv[]) {
 		cgi.parseCookies();
 
 		if(cgi.cookie("PHPSESSID")==""){
-			cout << "No session, how odd"<<endl;
+			res["result"]=false;
+			res["what"]="No session";
 		}else{
 			PHPSession session(FtdConfig::Instance().GetStringOrDefault("general","phpsession","/var/lib/php4/sess_")+cgi.cookie("PHPSESSID"));
 
+#ifdef DEBUG
+			cout << "Session: "<<session["valid"]<<" user: "<<session["user"]<<endl;
+#endif
+
 			if(session["valid"]=="1" && session["user"]!=""){
-				cout << "<br/>Valid session<br/>"<<endl;
 				try {
 
 					if (!cgi.isMulti()) {
-						cout << "This is no multipart post (No upload)<br/>"<<endl;
+						res["result"]=false;
+						res["what"]="Missing multipart post (This is no upload)";
 					}else{
 
 						char tmnam[100];
@@ -132,8 +139,7 @@ int main (int argc, char *argv[]) {
 						UnixClientSocket csock(SOCK_STREAM,"/tmp/ftdaemon");
 
 						if(!csock.Connect()){
-							cerr << "Could not connect to daemon"<<endl;
-							return -1;
+							throw new runtime_error("Unable to connect to server daemon");
 						}
 
 						Json::Value cmd(Json::objectValue);
@@ -149,7 +155,7 @@ int main (int argc, char *argv[]) {
 						if(rep.isObject() && rep.isMember("cmd") && rep["cmd"].isIntegral()){
 							int cmd=rep["cmd"].asInt();
 							if(cmd!=CMD_OK){
-								cout << "Send upload command failed"<<endl;
+								throw new runtime_error("Send upload command failed");
 							}else{
 								UnixClientSocket* client=sock.Accept();
 
@@ -158,7 +164,6 @@ int main (int argc, char *argv[]) {
 								client->Receive(rbuf,sizeof(rbuf));
 
 								if (rbuf[0]!='!') {
-									cout << "Transfer of fd failed"<<endl;
 									delete(client);
 									throw new runtime_error("Transfer of fd failed");
 								}
@@ -168,7 +173,6 @@ int main (int argc, char *argv[]) {
 								client->Receive(rbuf,sizeof(rbuf));
 
 								if (rbuf[0]!='!') {
-									cout << "Transfer of boundary failed"<<endl;
 									delete(client);
 									throw new runtime_error("Transfer of boundary failed");
 								}
@@ -179,7 +183,6 @@ int main (int argc, char *argv[]) {
 								client->Receive(rbuf,sizeof(rbuf));
 
 								if (rbuf[0]!='!') {
-									cout << "Transfer of content length failed"<<endl;
 									delete(client);
 									throw new runtime_error("Transfer of content length failed");
 								}
@@ -197,16 +200,24 @@ int main (int argc, char *argv[]) {
 					}
 
 				} catch ( std::runtime_error* e ) {
-					cout <<"Caught runtime exception "<<e->what()<<"<br/>"<<endl;
+					res["result"]=false;
+					stringstream ss;
+					ss <<"Caught runtime exception ["<<e->what()<<"]";
+					res["what"]=ss.str();
 				}
 			}else{
-				cout << "Not logged in<br/>"<<endl;
+				res["result"]=false;
+				res["what"]="Not logged in";
 			}
 		}
 	}catch(std::runtime_error& e){
-		cout << "Caught runtime exception(2): "<<e.what()<<"<br/>"<<endl;
+		res["result"]=false;
+		stringstream ss;
+		ss << "Caught runtime exception(2) ["<<e.what()<<"]";
+		res["what"]=ss.str();
 	}
-	cout << "</body></html>"<<endl;
+	Json::FastWriter writer;
+	cout << writer.write(res)<<endl;
 
 	return(0);
 }
