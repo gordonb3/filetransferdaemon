@@ -1,3 +1,11 @@
+filetransferdaemon (0.50.25) vincent hugo; urgency=low
+
+  * Change mimetype of upload to the faulty one text/plain
+    this due to us not wanting to start a download of the
+    content type when "Normal" operation. 
+
+ -- Tor Krill <tor@excito.com>  Sun, 09 Jan 2011 23:11:32 +0100
+
 filetransferdaemon (0.50.24) vincent hugo; urgency=low
 
   * Dont use Compat version of inotify (Should not be needed) 

@@ -90,7 +90,8 @@ static Json::Value ReadJsonValue(UnixClientSocket& sock){
 
 int main (int argc, char *argv[]) {
 
-	cout << "Content-type: application/json"<<endl<<endl;
+//	cout << "Content-type: application/json"<<endl<<endl;
+	cout << "Content-type: text/plain"<<endl<<endl;
 	Json::Value res;
 	res["result"]=true;
 #ifdef DEBUG
