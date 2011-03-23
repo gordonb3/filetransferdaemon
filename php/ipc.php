@@ -30,7 +30,8 @@ class Downloader{
 	var $fp;
 
 	function _connect(){
-		$this->fp = stream_socket_client("unix:///tmp/ftdaemon", $errno, $errstr, 5);
+
+		$this->fp = @stream_socket_client("unix:///tmp/ftdaemon", $errno, $errstr, 5);
 		return !($this->fp===FALSE);
 	}
             

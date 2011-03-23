@@ -1,3 +1,9 @@
+filetransferdaemon (0.50.26) vincent hugo; urgency=low
+
+  * Do not bail out if socket doesn't exists (Closes: 1626) 
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 23 Mar 2011 16:55:22 +0100
+
 filetransferdaemon (0.50.25) vincent hugo; urgency=low
 
   * Change mimetype of upload to the faulty one text/plain
