@@ -317,7 +317,7 @@ SocketFdDownloadManager::SocketFdDownloadManager(){
 
 SocketFdDownloader* SocketFdDownloadManager::NewSocketFdDownloader(){
 
-	return new SocketFdDownloader::SocketFdDownloader(this);
+	return new SocketFdDownloader(this);
 }
 
 Downloader* SocketFdDownloadManager::Filter(const URL& url,map<string,string>& hints){

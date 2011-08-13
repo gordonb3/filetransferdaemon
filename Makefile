@@ -30,7 +30,7 @@ VPATH = src
 VERSION ?= unknown
 CFGPATH ?= $(CURDIR)/ftdconfig.ini
 
-CXXFLAGS_EXTRA = -g -D_FILE_OFFSET_BITS=64  -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -Wall \
+CXXFLAGS_EXTRA = -g -D_FILE_OFFSET_BITS=64  -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -D__STDC_FORMAT_MACROS -Wall \
 				 -DPACKAGE_VERSION="\"$(VERSION)\"" -DCFGPATH="\"$(CFGPATH)\"" \
 				 $(shell pkg-config --cflags libeutils libtorrent-rasterbar sigc++-2.0 libcurl)
 				 #-Wextra -Wold-style-cast -Woverloaded-virtual -Wsign-promo

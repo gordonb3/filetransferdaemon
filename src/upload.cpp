@@ -38,6 +38,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <syslog.h>
+#include <inttypes.h>
 
 #ifdef DMALLOC
 #include <dmalloc.h>
@@ -178,7 +179,7 @@ int main (int argc, char *argv[]) {
 									throw new runtime_error("Transfer of boundary failed");
 								}
 
-								sprintf(rbuf,"%llu",cgi.getContentLength());
+								sprintf(rbuf,"%" PRIu64,cgi.getContentLength());
 								client->Send(rbuf,strlen(rbuf));
 
 								client->Receive(rbuf,sizeof(rbuf));
