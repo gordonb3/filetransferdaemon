@@ -29,6 +29,7 @@
 #include <grp.h>
 #include <stdio.h>
 #include <syslog.h>
+#include <time.h>
 
 #include <stdexcept>
 #include <iostream>
@@ -127,7 +128,7 @@ void TorrentDownloader::DeleteTorrent(void){
 				syslog(LOG_WARNING,"Failed to remove torrent file %s because %m"
 						,this->torrentfilename.c_str());
 			}
-		}catch(EExcept::ENoent err){
+		}catch(EExcept::ENoent &err){
 			syslog(LOG_WARNING,"File %s does not excist",this->torrentfilename.c_str());
 		}catch(...){
 			syslog(LOG_ERR,"Unknown exception caught when deleting %s"
@@ -141,7 +142,7 @@ void TorrentDownloader::DeleteTorrent(void){
 				syslog(LOG_WARNING,"Failed to remove resume file %s because %m"
 						,this->resumefilename.c_str());
 			}
-		}catch(EExcept::ENoent err){
+		}catch(EExcept::ENoent &err){
 			syslog(LOG_WARNING,"File %s does not excist",this->resumefilename.c_str());
 		}catch(...){
 			syslog(LOG_ERR,"Unknown exception caught when deleting %s"
@@ -255,6 +256,7 @@ void TorrentDownloader::WriteTorrent(void){
 		syslog(LOG_NOTICE,"Failed to chown file %s because %m",wp.c_str());
 	}
 	free(pt);
+	close(fd);
 }
 
 bool TorrentDownloader::StartFromFile(const string& path){
@@ -360,13 +362,14 @@ void TorrentDownloader::HttpDone() {
 }
 
 void TorrentDownloader::DeferredCleanup(void*pl){
+	const struct timespec delay = {0,100000000L};
 	TorrentDownloader* dl=static_cast<TorrentDownloader*>(pl);
 	syslog(LOG_DEBUG,"Doing deferred CurlDownload cleanup");
 	if(dl->downloader){
 		CurlDownloader* hdl=dl->downloader;
 		dl->downloader=NULL;
 		while(!hdl->ReapOK()){
-			usleep(100000);
+			nanosleep(&delay,NULL);
 		}
 		delete hdl;
 	}
@@ -899,7 +902,7 @@ void TorrentDownloadManager::UpdateDownloaders(){
 	this->dlmutex.Lock();
 
 	for(list<TorrentDownloader*>::iterator lIt=this->downloaders.begin();
-		lIt!=this->downloaders.end();lIt++){
+		lIt!=this->downloaders.end();++lIt){
 		(*lIt)->Update();
 	}
 

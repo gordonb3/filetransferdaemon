@@ -94,7 +94,7 @@ protected:
 	 * 
 	 * @param manager
 	 */
-	SocketFdDownloader(SocketFdDownloadManager* manager):mgr(manager){};
+	SocketFdDownloader(SocketFdDownloadManager* manager):fd(0),mgr(manager){};
 
 	/**
 	 * Pure virtual start download. This is called to tell a downloader to

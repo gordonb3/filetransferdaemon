@@ -27,12 +27,7 @@
 #include <errno.h>
 #include <syslog.h>
 
-#ifdef USECOMPAT
-	#include "compat/inotify.h"
-	#include "compat/inotify-syscalls.h"
-#else
-	#include <sys/inotify.h>
-#endif
+#include <sys/inotify.h>
 
 #include "FtdConfig.h"
 #include <libeutils/FileUtils.h>
@@ -204,7 +199,7 @@ void DirWatcher::AddDownload(const string& path){
 			delete down;
 		}
 
-	}catch(EExcept::ENoent err){
+	}catch(EExcept::ENoent &err){
 		syslog(LOG_ERR,"Torrent file does not exist: %s",err.what());
 	}
 }
@@ -221,7 +216,7 @@ void DirWatcher::LoadInitial(){
 
 	try{
 		files=FileUtils::Glob(gp);
-	}catch(EExcept::ENoent err){
+	}catch(EExcept::ENoent &err){
 		syslog(LOG_DEBUG,"Glob saved system torrents: no matches");
 	} 
 
@@ -231,11 +226,11 @@ void DirWatcher::LoadInitial(){
 	try{
 		list<string> userfiles=FileUtils::Glob(gp);
 		files.splice(files.end(),userfiles);
-	}catch(EExcept::ENoent err){
+	}catch(EExcept::ENoent &err){
 		syslog(LOG_DEBUG,"Glob useradded torrents: no matches");
 	} 
 
-	for(list<string>::iterator lIt=files.begin();lIt!=files.end();lIt++){
+	for(list<string>::iterator lIt=files.begin();lIt!=files.end();++lIt){
 		//std::cerr << "File: ["<<*lIt<<"]"<<std::endl;
 		this->AddDownload(*lIt);
 	}
@@ -264,7 +259,7 @@ void DirWatcher::AddWatch(const string& path){
 void DirWatcher::DelWatch(const string& path){
 	map<int,string>::iterator mIt=this->iwatches.begin();
 	while(mIt!=this->iwatches.end() && (*mIt).second!=path){
-		mIt++;
+		++mIt;
 	}
 	if(mIt!=this->iwatches.end()){
 		if(inotify_rm_watch(this->inotifyfd,(*mIt).first)<0){
@@ -282,10 +277,10 @@ void DirWatcher::AddWatches(){
 	// Add watches in all matching torrent dirs
 	try{
 		list<string> files=FileUtils::Glob(this->baseglob);
-		for(list<string>::iterator lIt=files.begin();lIt!=files.end();lIt++){
+		for(list<string>::iterator lIt=files.begin();lIt!=files.end();++lIt){
 			this->AddWatch(*lIt);
 		}
-	}catch(EExcept::ENoent err){
+	}catch(EExcept::ENoent &err){
 		syslog(LOG_INFO,"No matches, no torrent dir found");
 	} 
 }

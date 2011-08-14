@@ -190,7 +190,7 @@ void SocketFdDownloader::Run(){
 void SocketFdDownloader::CleanUp(){
 	// Remove tempfiles
 	map<string,string> filenames=cgi.fileNames();
-	for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();lIt++){
+	for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();++lIt){
 		unlink((*lIt).first.c_str());
 	}
 
@@ -228,7 +228,7 @@ void SocketFdDownloader::FixFiles(){
 		map<string,string> filenames=cgi.fileNames();
 
 		// Start by changing ownership
-		for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();lIt++){
+		for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();++lIt){
 			if ( chown(
 					(*lIt).first.c_str(),
 					this->user==0xffff?0:this->user,
@@ -248,7 +248,7 @@ void SocketFdDownloader::FixFiles(){
 		if(srcdev==dstdev){
 			// Do move
 			syslog(LOG_DEBUG,"Upload: Move files");
-			for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();lIt++){
+			for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();++lIt){
 				string dest=this->destinationpath+"/"+(*lIt).second;
 				// Move into right place.
 				if(rename((*lIt).first.c_str(),dest.c_str())){
@@ -262,7 +262,7 @@ void SocketFdDownloader::FixFiles(){
 		}else{
 			syslog(LOG_DEBUG,"Upload: Copy and delete files");
 			// Do copy
-			for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();lIt++){
+			for(map<string,string>::iterator lIt=filenames.begin();lIt!=filenames.end();++lIt){
 				try{
 					string dest=this->destinationpath+"/"+(*lIt).second;
 					FileUtils::CopyFile((*lIt).first.c_str(),dest.c_str());
@@ -270,7 +270,7 @@ void SocketFdDownloader::FixFiles(){
 					if ( chown(dest.c_str(),this->user==0xffff?0:this->user,this->group==0xffff?0:this->group) ) {
 						syslog(LOG_ERR,"Chown failed: %s %m",dest.c_str());
 					}
-				}catch(runtime_error e){
+				}catch(runtime_error &e){
 					syslog(LOG_ERR,"Unable to copy file to destination: %s",e.what());
 				}
 				// Remove src file

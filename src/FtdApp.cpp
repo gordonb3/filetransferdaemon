@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sigc++/sigc++.h>
+#include <time.h>
 
 #include "FtdConfig.h"
 #include <libeutils/FileUtils.h>
@@ -59,7 +60,7 @@ bool FtdApp::FindByUUID(string& uuid, string& user){
 	list<Downloader*>::iterator lIt=this->transfers[user].begin();
 
 	while (lIt!=this->transfers[user].end() && (*lIt)->GetUUID()!=uuid ) {
-		lIt++;
+		++lIt;
 	}
 
 	if (lIt!=this->transfers[user].end()) {
@@ -85,9 +86,9 @@ bool FtdApp::FindByURL(string& url){
 				transfermutex.Unlock();
 				return true;
 			}
-			lIt++;
+			++lIt;
 		}
-		uIt++;
+		++uIt;
 	}
 	transfermutex.Unlock();
 	return false;
@@ -243,7 +244,7 @@ void FtdApp::RegisterDownload(const string& user,Downloader* down){
 DownloadManager* FtdApp::FindManagerByService(const string& service){
 	DownloadManager* dm=NULL;
 	for(list<DownloadManager*>::iterator iDM=this->managers.begin();
-		iDM!=this->managers.end();iDM++){
+		iDM!=this->managers.end();++iDM){
 			if( (*iDM)->ProvidesService(service)){
 				dm=*iDM;
 			}
@@ -384,6 +385,8 @@ void FtdApp::dlDone(void* dl){
 
 void FtdApp::RemoveDownload(Downloader* dl){
 	
+	const struct timespec delay = {0,100000000L};
+
 	syslog(LOG_DEBUG,"Remove download: %s",dl->GetDownloadName().c_str());
 	
 	string user=User::UIDToUser(dl->GetUser());
@@ -391,12 +394,12 @@ void FtdApp::RemoveDownload(Downloader* dl){
 	list<Downloader*>::iterator lIt=this->transfers[user].begin();
 
     while (lIt!=this->transfers[user].end() && ((*lIt)->GetUrl()!=dl->GetUrl()) ) {
-        lIt++;
+        ++lIt;
     }
 
     if (lIt!=this->transfers[user].end()) {
     	while(!dl->ReapOK()){
-    		usleep(100000);
+		nanosleep(&delay, NULL);
     	}
     	this->transfers[user].erase(lIt);
     	delete(dl);
@@ -458,7 +461,7 @@ void FtdApp::CancelDownload(Json::Value& req){
 	// First try to find it by uuid
 	if(has_uuid){
 		while (lIt!=this->transfers[user].end() && (*lIt)->GetUUID()!=uuid ) {
-			lIt++;
+			++lIt;
 		}
 	}else{
 		syslog(LOG_DEBUG,"No UUID provided");
@@ -469,7 +472,7 @@ void FtdApp::CancelDownload(Json::Value& req){
 		syslog(LOG_DEBUG,"Failed to locate download by uuid, trying url instead");
 		lIt=this->transfers[user].begin();
 		while (lIt!=this->transfers[user].end() && (*lIt)->GetUrl()!=url ) {
-			lIt++;
+			++lIt;
 		}
 	}
 
@@ -524,7 +527,7 @@ void FtdApp::ListUserDownloads(const string& user, UnixClientSocket* sock){
         while(lIt!=transfers[user].end()){
 			this->SendDownload(user,*lIt, sock);
 			
-            lIt++;
+            ++lIt;
         }
     }
 
@@ -561,7 +564,7 @@ void FtdApp::ListDownloads(Json::Value& req, UnixClientSocket* sock){
         while(tIt!=this->transfers.end()){
             cout << "List :"<<(*tIt).first<<endl;
             this->ListUserDownloads((*tIt).first,sock);
-            tIt++;
+            ++tIt;
         }
     	
         transfermutex.Unlock();
@@ -586,7 +589,7 @@ void FtdApp::GetDownloadByUUID(string& user, string& uuid, UnixClientSocket* soc
 	list<Downloader*>::iterator lIt=this->transfers[user].begin();
 
 	while (lIt!=this->transfers[user].end() && (*lIt)->GetUUID()!=uuid ) {
-		lIt++;
+		++lIt;
 	}
 
 	if (lIt!=this->transfers[user].end()) {
@@ -632,13 +635,14 @@ Downloader* FtdApp::FindDownloader(const URL &url){
 			dl->SetHints(hints);
 			break;
 		}
-		lIt++;
+		++lIt;
 	}
 	return dl;
 }
 
 void FtdApp::ShutDown(){
 
+	const struct timespec delay = {0,100000000L};
     transfermutex.Lock();
 	map<string,list<Downloader*> >::iterator tIt=this->transfers.begin();
     while(tIt!=this->transfers.end()){
@@ -655,12 +659,12 @@ void FtdApp::ShutDown(){
 			// Make sure downloader really is done
         	// TODO: move this into waitforcomplertion
 			while(!(*lIt)->ReapOK()){
-						usleep(100000);
+						nanosleep(&delay, NULL);
 			}
         	delete *lIt;
-        	lIt++;
+		++lIt;
         }
-        tIt++;
+        ++tIt;
     }
     this->transfers.clear();
     transfermutex.Unlock();

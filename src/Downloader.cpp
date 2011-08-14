@@ -186,7 +186,7 @@ void Downloader::InvokeCallbacks(){
 	this->cbmutex.Lock();
 	for (cb_map::iterator it=callbacks.begin();it!=callbacks.end();it++) {
 		for (list<void*>::iterator lit=(*it).second.begin();
-			lit!=(*it).second.end(); lit++) {
+			lit!=(*it).second.end(); ++lit) {
 
 			((*it).first)((*lit));
 

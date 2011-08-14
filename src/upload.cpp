@@ -51,7 +51,7 @@ using namespace std;
 
 void show_environ(map<string,string>& env){
 	map<string,string>::const_iterator eIt=env.begin();
-	for(;eIt!=env.end();eIt++){
+	for(;eIt!=env.end();++eIt){
 		pair<string,string> elem=*eIt;
 		cout<<"Env: ["<<elem.first<<"] = ["<< elem.second<<"]<br/>"<<endl;
 	}

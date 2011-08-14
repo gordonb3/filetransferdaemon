@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #include <grp.h>
 #include <syslog.h>
+#include <time.h>
 
 #include "CurlDownloader.h"
 #include <libeutils/StringTools.h>
@@ -44,7 +45,7 @@
 
 using namespace std;
 
-CurlDownloader::CurlDownloader(string url,string destination,string uuid):Downloader(url,destination,uuid) {
+CurlDownloader::CurlDownloader(string url,string destination,string uuid):Downloader(url,destination,uuid),curl(NULL) {
 	m_timeout=0;
 	m_ctimeout=0;
 	this->headersonly=false;
@@ -133,7 +134,7 @@ size_t CurlDownloader::Headers(void *data, size_t size, size_t nmemb, void *hand
 			list<string>::const_iterator lIt=items.begin();
 			d->headers[key]=*(lIt++);
 			//cerr << "Key1: ["<<key<<"] value ["<<d->headers[key]<<"]"<<endl; 
-			for ( ;lIt!=items.end();lIt++ ) {
+			for ( ;lIt!=items.end();++lIt ) {
 				//cerr << "Parameter: ["<<*lIt<<"]"<<endl;
 				list<string> par=StringTools::Split(*lIt,'=');
 				if ( par.size()==2 ) {
@@ -367,6 +368,7 @@ CurlDownloader* CurlDownloadManager::GetDownloader(string url,string destination
 }
 
 Downloader* CurlDownloadManager::Filter(const URL &url,map<string,string>& hints){
+	const struct timespec delay = {0,100000000L};
 	syslog(LOG_DEBUG,"Filter headers");
 	if (url.Scheme()=="http" || url.Scheme()=="https" || url.Scheme()=="ftp") {
 		if (url.Extension()=="torrent") {
@@ -388,7 +390,7 @@ Downloader* CurlDownloadManager::Filter(const URL &url,map<string,string>& hints
 				// Make sure downloader really is done 
 	        	// TODO: move this into waitforcomplertion
 				while(!dl->ReapOK()){
-							usleep(100000);
+							nanosleep(&delay, NULL);
 				}
 				delete(dl);
 				return NULL;
@@ -397,7 +399,7 @@ Downloader* CurlDownloadManager::Filter(const URL &url,map<string,string>& hints
 			// Make sure downloader really is done 
         	// TODO: move this into waitforcomplertion
 			while(!dl->ReapOK()){
-						usleep(100000);
+						nanosleep(&delay, NULL);
 			}
 			syslog(LOG_DEBUG,"About to delete %p",dl);
 			delete(dl);
