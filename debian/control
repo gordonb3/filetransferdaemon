@@ -9,7 +9,7 @@ Build-Depends: debhelper (>= 7.2),
  libtorrent-rasterbar-dev, 
  libpopt-dev, 
  libboost-system-dev,
- libcurl4-dev 
+ libcurl4-openssl-dev | libcurl4-dev
 Standards-Version: 3.9.2
 
 Package: filetransferdaemon
