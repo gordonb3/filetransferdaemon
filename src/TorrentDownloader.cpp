@@ -59,14 +59,11 @@
 #include <libtorrent/extensions/metadata_transfer.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
 
-#include <boost/filesystem/operations.hpp>
-
 #ifdef DMALLOC
 #include <dmalloc.h>
 #endif
 
-using namespace libtorrent;
-using namespace boost::filesystem;
+
 
 /*******************************************
 *
@@ -173,8 +170,8 @@ void TorrentDownloader::DoWriteResumeData(boost::shared_ptr<entry> resume_data){
 		FileUtils::Chown(wp+suf,this->user,"users");
 	}
 	this->resumefilename=wp+suf+"/"+StringTools::GetFileName(this->torrentfilename)+".resume";
-	std::ofstream of(this->resumefilename.c_str(),ios::trunc|ios::out);
-	std::ostream_iterator<char> ofIt(of);
+	ofstream of(this->resumefilename.c_str(),ios::trunc|ios::out);
+	ostream_iterator<char> ofIt(of);
 	bencode(ofIt,*resume_data);
 	of.close();
 	FileUtils::Chown(this->resumefilename,this->user,"users");
@@ -262,7 +259,7 @@ void TorrentDownloader::WriteTorrent(void){
 bool TorrentDownloader::StartFromFile(const string& path){
 	syslog(LOG_INFO,"Adding download from file %s",path.c_str());
 	this->torrentfilename=path;
-	std::filebuf fb;
+	filebuf fb;
 	fb.open(path.c_str(),ios::in);
 	iostream infile(&fb);
 	this->SetUUID(StringTools::SimpleUUID());
@@ -294,7 +291,7 @@ bool TorrentDownloader::AddDownload(std::iostream* str){
 
 		if(Stat::FileExists(this->resumefilename)){
 			syslog(LOG_INFO,"Adding resume data from file");
-			std::ifstream inf(this->resumefilename.c_str());
+			ifstream inf(this->resumefilename.c_str());
 			inf.unsetf(std::ios_base::skipws);
 			istream_iterator<char> ifIt(inf);
 			resume_data=new std::vector<char>();
@@ -337,12 +334,26 @@ bool TorrentDownloader::AddDownload(std::iostream* str){
 #else
 		this->handle.set_sequenced_download_threshold(15);
 #endif
-	}catch(libtorrent_exception& e){
-		boost::system::error_code ec = e.error();
-		syslog(LOG_ERR,ec.message().c_str());
-		this->errmsg = ec.message();
-		this->status = FAILED;
-		this->SignalFailed.emit(ec.message());
+	}catch(libtorrent::invalid_torrent_file& itf){
+		syslog(LOG_ERR,"Invalid torrent file");
+		result=false;
+		this->errmsg="Invalid torrent file";
+		this->status=FAILED;
+		this->SignalFailed.emit("Invalid torrent file");
+		this->Complete();
+	}catch(invalid_encoding& ie){
+		syslog(LOG_ERR,"Invalid encoding in torrent");
+		result=false;
+		this->errmsg="Torrent malformed";
+		this->status=FAILED;
+		this->SignalFailed.emit("Invalid encoding in torrent");
+		this->Complete();
+	}catch(duplicate_torrent& dt){
+		syslog(LOG_ERR,"Torrent already added");
+		result=false;
+		this->status=FAILED;
+		this->errmsg="Duplicate torrent";
+		this->SignalFailed.emit("Torrent already added");
 		this->Complete();
 	}
 	return result;
@@ -961,28 +972,23 @@ void TorrentDownloadManager::Run(){
 		dht_s.service_port=cfg.GetIntegerOrDefault("torrent","listenportstart",10000);
 		this->s.set_dht_settings(dht_s);
 
-		lazy_entry e;
+		entry e;
 
 		string stpath=cfg.GetStringOrDefault("general","statedir","/etc/ftd")+"/dhtstate";
 		if(Stat::FileExists(stpath)){
 			try{
-				int size = file_size(stpath);
-                if (size > 10 * 1000000)
-                {
-                        return;
-                }
-				std::vector<char> buf(size);
-                std::ifstream(stpath.c_str(), std::ios_base::binary).read(&buf[0], size);
-				lazy_bdecode(&buf[0], &buf[0] + buf.size(), e);
-
-			}catch(libtorrent_exception& e){
-				syslog(LOG_ERR,e.error().message().c_str());
+				filebuf fb;
+				fb.open(stpath.c_str(),ios::in);
+				iostream infile(&fb);
+				infile.unsetf(std::ios_base::skipws);
+				e = bdecode(std::istream_iterator<char>(infile),std::istream_iterator<char>());
+			}catch(invalid_encoding& ie){
+				syslog(LOG_ERR,"DHT state file not valid");
 			}
 
 		}
 		syslog(LOG_INFO,"Starting dht support");
-		this->s.load_state(e);
-		this->s.start_dht();
+		this->s.start_dht(e);
 		this->s.add_dht_router(std::make_pair(std::string("router.bittorrent.com"),6881));
 		this->s.add_dht_router(std::make_pair(std::string("router.utorrent.com"),6881));
 		this->s.add_dht_router(std::make_pair(std::string("router.bitcomet.com"),6881));
@@ -1079,7 +1085,7 @@ session& TorrentDownloadManager::GetSession(){
 }
 
 TorrentDownloader* TorrentDownloadManager::NewTorrentDownloader(){
-	TorrentDownloader* dl=new TorrentDownloader(this);
+	TorrentDownloader* dl=new TorrentDownloader::TorrentDownloader(this);
 
 	this->dlmutex.Lock();
 	this->downloaders.push_back(dl);
@@ -1186,12 +1192,11 @@ void TorrentDownloadManager::Shutdown(){
 	if(cfg.GetBoolOrDefault("torrent","dhtsupport",false)){
 		string stpath=cfg.GetStringOrDefault("general","statedir","/etc/ftd");
 		if(Stat::DirExists(stpath)){
-			entry e;
-			this->s.save_state(e);
+			entry e=this->s.dht_state();
 			vector<char> buffer;
 			bencode(std::back_inserter(buffer),e);
-			std::fstream of(string(stpath+"/dhtstate").c_str(),std::fstream::out|std::fstream::binary);
-			std::ostream_iterator<char> oI(of);
+			fstream of(string(stpath+"/dhtstate").c_str(),fstream::out|fstream::binary);
+			ostream_iterator<char> oI(of);
 			copy(buffer.begin(),buffer.end(),oI);
 			of.close();
 		}
