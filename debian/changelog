@@ -1,3 +1,16 @@
+filetransferdaemon (0.51) vincent hugo; urgency=low
+
+  * Updated to comply with current build norms
+  * Applying cppcheck fixes
+  * Link to tcl8.5 (needed but not really used)
+  * Switch EUtils::Thread to boost::thread
+  * Remove sleep in SocketFdDownloader
+  * Bump standards version
+  * fix libcurl dependices
+  * Fix require facility in init script
+
+ -- Carl Fürstenberg <carl@excito.com>  Fri, 04 Nov 2011 14:56:45 +0100
+
 filetransferdaemon (0.50.26) vincent hugo; urgency=low
 
   * Do not bail out if socket doesn't exists (Closes: 1626) 
