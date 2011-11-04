@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 7.2),
  libpopt-dev, 
  libboost-system-dev,
  libcurl4-dev 
-Standards-Version: 3.8.4
+Standards-Version: 3.9.2
 
 Package: filetransferdaemon
 Architecture: any
