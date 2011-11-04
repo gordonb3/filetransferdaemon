@@ -676,8 +676,7 @@ TorrentDownloadManager::TorrentDownloadManager():
 	s(libtorrent::fingerprint("LT", 0, 1, 0, 0),0)
 {
 	// Start workerthread
-	this->Start();
-
+	m_Thread = boost::thread(&TorrentDownloadManager::Run, this);
 }
 
 static const char* statetostring(torrent_status::state_t st){

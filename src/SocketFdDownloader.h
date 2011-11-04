@@ -26,7 +26,7 @@
 #define MY_SOCKETFDDOWNLOADER_H
 
 #include "Downloader.h"
-#include <libeutils/Thread.h>
+#include <boost/thread.hpp>
 #include <libeutils/Url.h>
 #include <libeutils/ECGI.h>
 
@@ -43,8 +43,9 @@ class SocketFdDownloadManager;
  * 
  * @author "Tor Krill" <tor@excito.com>
  */
-class SocketFdDownloader: public Downloader, public Thread{
+class SocketFdDownloader: public Downloader {
 private:
+	boost::thread    m_Thread;
 
 	/**
 	 * File descriptor received over socket.

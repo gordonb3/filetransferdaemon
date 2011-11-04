@@ -104,8 +104,10 @@ public:
 	friend class DirWatcher;
 };
 
-class TorrentDownloadManager:public DownloadManager,public Thread{
+class TorrentDownloadManager:public DownloadManager{
 private:
+	boost::thread    m_Thread;
+
 	bool isRunning;
 	session s;
 	

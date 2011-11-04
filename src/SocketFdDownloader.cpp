@@ -46,10 +46,7 @@
 
 void SocketFdDownloader::StartDownload(){
 	this->status=QUEUED;
-
-
-	this->Start();
-	pthread_yield();
+	m_Thread = boost::thread(&SocketFdDownloader::Run, this);
 }
 
 void SocketFdDownloader::FilterFields(const string& field){

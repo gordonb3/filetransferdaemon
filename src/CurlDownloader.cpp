@@ -204,9 +204,7 @@ void CurlDownloader::StartDownload() {
 
 	this->status=QUEUED;
 
-
-	this->Start();
-	pthread_yield();
+	m_Thread = boost::thread(&CurlDownloader::Run, this);
 }
 
 void CurlDownloader::StopDownload(){

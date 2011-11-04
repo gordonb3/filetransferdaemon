@@ -25,7 +25,7 @@
 #ifndef MY_CURLDOWNLOADER
 #define MY_CURLDOWNLOADER
 
-#include <libeutils/Thread.h>
+#include <boost/thread.hpp>
 #include "Downloader.h"
 #include <libeutils/Url.h>
 #include <libeutils/Mutex.h>
@@ -35,10 +35,12 @@
 
 using namespace EUtils;
 
-class CurlDownloader: public Downloader, public Thread {
+class CurlDownloader: public Downloader {
 private:
 	CurlDownloader(const CurlDownloader&);
 	CurlDownloader& operator=(const CurlDownloader&);
+
+	boost::thread    m_Thread;
 
 	unsigned int m_timeout; // Transaction timeout
 	unsigned int m_ctimeout; // Connect timeout

@@ -69,6 +69,9 @@ DirWatcher::~DirWatcher(){
 	}
 
 }
+void DirWatcher::Start() {
+	m_Thread = boost::thread(&DirWatcher::Run, this);
+}
 
 void DirWatcher::Run(){
 	// Load torrents already in place

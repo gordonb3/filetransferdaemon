@@ -27,11 +27,13 @@
 
 #include <map>
 
-#include <libeutils/Thread.h>
+#include <boost/thread.hpp>
 #include "FtdApp.h"
 #include "TorrentDownloader.h"
 
-class DirWatcher: public Thread{
+class DirWatcher {
+	boost::thread    m_Thread;
+
 	int inotifyfd;
 	bool doRun;
 	map<int,string> iwatches;
@@ -53,6 +55,7 @@ public:
 	DirWatcher();
 	void AddWatch(const string& path);
 	void DelWatch(const string& path);
+	void Start();
 	void Stop();
 	virtual void Run();
 	virtual ~DirWatcher();
