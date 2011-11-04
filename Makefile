@@ -41,7 +41,7 @@ CXXFLAGS_EXTRA = -g -D_FILE_OFFSET_BITS=64  -D_LARGEFILE64_SOURCE -D_LARGEFILE_S
 LD_LIBTORRENT= $(shell pkg-config --libs libtorrent-rasterbar) \
 				-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt
 
-LDFLAGS_EXTRA = $(shell pkg-config --libs libeutils sigc++-2.0) $(shell curl-config --libs) -lpopt
+LDFLAGS_EXTRA = $(shell pkg-config --libs libeutils sigc++-2.0) $(shell curl-config --libs) -lpopt -ltcl8.5
 
 FTD_OBJS=$(FTD_SRC:%.cpp=%.o)
 FTDCLIENT_OBJS=$(FTDCLIENT_SRC:%.cpp=%.o)
