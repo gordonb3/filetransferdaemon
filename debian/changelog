@@ -1,3 +1,10 @@
+filetransferdaemon (0.54) vincent; urgency=low
+
+  * Upload error reporting
+  * Revert "Remove sleep in SocketFdDownloader"
+
+ -- Carl Fürstenberg <carl@excito.com>  Fri, 18 Nov 2011 15:56:53 +0100
+
 filetransferdaemon (0.53) hugo vincent; urgency=low
 
   * Close open pipes after use
