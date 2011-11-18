@@ -138,6 +138,7 @@ void SocketFdDownloader::Run(){
 		}
 	}catch(runtime_error* e){
 		syslog(LOG_ERR, "Caught exception: %s",e->what() );
+        sock.Send("err",4);
 		err=true;
 	}
 

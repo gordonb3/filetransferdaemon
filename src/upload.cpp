@@ -191,6 +191,10 @@ int main (int argc, char *argv[]) {
 								// Wait for completion
 								client->Receive(rbuf,sizeof(rbuf));
 
+                                if (strncmp(rbuf, "err", 3) ) {
+                                    throw new runtime_error("Upload failed");
+                                }
+
 #ifdef DEBUG
 								cout<<"Got answer:"<<string(rbuf)<<endl;
 #endif
