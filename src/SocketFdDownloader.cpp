@@ -134,6 +134,7 @@ void SocketFdDownloader::Run(){
 				err=true;
 			}
 
+			close(this->fd);
 		}
 	}catch(runtime_error* e){
 		syslog(LOG_ERR, "Caught exception: %s",e->what() );

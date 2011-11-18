@@ -1,3 +1,10 @@
+filetransferdaemon (0.53) hugo vincent; urgency=low
+
+  * Close open pipes after use
+  * adding gbp-conf
+
+ -- Carl Fürstenberg <carl@excito.com>  Fri, 04 Nov 2011 19:01:02 +0100
+
 filetransferdaemon (0.52) vincent hugo; urgency=low
 
   * Revert "Updated to comply with current build norms"
