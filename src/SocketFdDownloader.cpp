@@ -118,7 +118,23 @@ void SocketFdDownloader::Run(){
 
 					cgi.FieldAdded.connect(sigc::mem_fun(this,&SocketFdDownloader::FilterFields));
 
+					struct timeval now;
+					if(gettimeofday(&now,NULL)){
+						syslog(LOG_NOTICE,"Error getting time: %m");
+					}
+
 					cgi.parse();
+
+					struct timeval later;
+					if(gettimeofday(&later,NULL)){
+						syslog(LOG_NOTICE,"Error getting time: %m");
+					}
+
+					if( (later.tv_sec-now.tv_sec)<3){
+						// Sleep a while to let UI catch up
+						sleep(4-(later.tv_sec-now.tv_sec));
+					}
+
 
 					if(cgi.field("UPLOADPATH")==""){
 					}else{
