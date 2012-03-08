@@ -40,6 +40,8 @@
 
 #include <ext/stdio_filebuf.h>
 
+#include <boost/filesystem.hpp>
+
 #include "FtdConfig.h"
 #include <libeutils/FileUtils.h>
 #include <libeutils/UserGroups.h>
@@ -445,6 +447,25 @@ void TorrentDownloader::ChangePermissions(){
 		torrent_info ti=this->handle.get_torrent_info();
 		for(torrent_info::file_iterator fIt=ti.begin_files();fIt!=ti.end_files();fIt++){
 			string filename=(*fIt).path.native_file_string();
+
+            boost::filesystem::path p(filename);
+            if(boost::filesystem::exists(p)) {
+                if(boost::filesystem::is_directory(p)) {
+                    for ( boost::filesystem::recursive_directory_iterator end, dir(p);
+                            dir != end;
+                            ++dir
+                        ) {
+                        if ( chown(dir->path().string().c_str(),user,group) ) {
+                            syslog(LOG_NOTICE,"Torrent chown failed for %s: %m", dir->path().string().c_str());
+                        }
+                    }
+                } else {
+                    if ( chown(p.string().c_str(),user,group) ) {
+                        syslog(LOG_NOTICE,"Torrent chown failed for %s: %m", p.string().c_str());
+                    }
+
+                }
+            }
 
 			//syslog(LOG_DEBUG,"File: %s",(this->destinationpath+"/"+filename).c_str());
 
