@@ -1106,7 +1106,7 @@ session& TorrentDownloadManager::GetSession(){
 }
 
 TorrentDownloader* TorrentDownloadManager::NewTorrentDownloader(){
-	TorrentDownloader* dl=new TorrentDownloader::TorrentDownloader(this);
+	TorrentDownloader* dl=new TorrentDownloader(this);
 
 	this->dlmutex.Lock();
 	this->downloaders.push_back(dl);
