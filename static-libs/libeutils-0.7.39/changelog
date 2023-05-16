@@ -1,0 +1,262 @@
+libeutils (0.7.39) unstable testing; urgency=low
+
+  * remove redundant ::Stat
+  * adding gitreview
+  * Rework file copying routing to not use mmap
+  * Adding missing headers
+
+ -- Carl Fürstenberg <carl@excito.com>  Thu, 14 Feb 2013 14:12:52 +0100
+
+libeutils (0.7.38) vincent hugo; urgency=low
+
+  * Remove debug write from php session
+
+ -- Tor Krill <tor@excito.com>  Sun, 09 Jan 2011 22:59:24 +0100
+
+libeutils (0.7.37) vincent hugo; urgency=low
+
+  * Remove debug prints that destroyed cgi-output
+
+ -- Tor Krill <tor@excito.com>  Fri, 07 Jan 2011 16:13:59 +0100
+
+libeutils (0.7.36) vincent hugo; urgency=low
+
+  * Fix boundary bug in ECGI
+
+ -- Tor Krill <tor@excito.com>  Sun, 19 Dec 2010 11:49:36 +0100
+
+libeutils (0.7.35) vincent; urgency=low
+
+  * remove the previous build-conflict
+
+ -- Carl Fürstenberg <carl@excito.com>  Mon, 19 Jul 2010 17:00:18 +0200
+
+libeutils (0.7.34) lucid; urgency=low
+
+  * build-conflict on expect << 5.44
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 14 Jul 2010 13:51:15 +0200
+
+libeutils (0.7.33) vincent; urgency=low
+
+  * adding depends
+
+ -- Carl Fürstenberg <carl@excito.com>  Fri, 09 Jul 2010 17:10:52 +0200
+
+libeutils (0.7.32ubuntu2) vincent; urgency=low
+
+  * B3
+  * Switch to dpkg-source 3.0 (native) format
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 09 Jun 2010 15:07:47 +0200
+
+libeutils (0.7.32ubuntu1) karmic; urgency=low
+
+  [ Tor Krill ]
+  * Local rebuild
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 09 Jun 2010 15:06:01 +0200
+
+libeutils (0.7.32) claire estelle; urgency=emergency
+
+  * actually not thinking that expect.h is an directory
+
+ -- Carl Fürstenberg <carl@excito.com>  Sun, 07 Feb 2010 14:11:39 +0100
+
+libeutils (0.7.31) claire estelle; urgency=low
+
+  *actually include includedir to tcl
+
+ -- Carl Fürstenberg <carl@excito.com>  Sun, 07 Feb 2010 14:00:26 +0100
+
+libeutils (0.7.30) claire estelle; urgency=low
+
+  * add expect to pkg-config
+
+ -- Carl Fürstenberg <carl@excito.com>  Sun, 07 Feb 2010 13:56:01 +0100
+
+libeutils (0.7.29) claire estelle; urgency=low
+
+  * Modified services, added a start/stop at specific levels
+  * Fixed bug in services code
+  * Return false on faulty parameters to enable service
+
+ -- Tor Krill <tor@excito.com>  Mon, 01 Feb 2010 12:18:09 +0100
+
+libeutils (0.7.28) claire; urgency=low
+
+  * changed buildsystem to cmake and unit test to tut
+  * was wrong checking, but keep it and add backward comapt rules for cmake
+
+ -- Carl Fürstenberg <carl@excito.com>  Sat, 02 Jan 2010 19:19:50 +0100
+
+libeutils (0.7.27) claire; urgency=low
+
+  * fix bug in check for daemon running
+
+ -- Tor Krill <tor@excito.com>  Tue, 08 Dec 2009 14:13:07 +0100
+
+libeutils (0.7.26) claire estelle; urgency=low
+
+  * link testcases against popt to make them work
+  * Add GetPid to services api
+  * Hack in magnet link support into url class
+
+ -- Tor Krill <tor@excito.com>  Tue, 08 Dec 2009 11:38:26 +0100
+
+libeutils (0.7.25) claire estelle; urgency=low
+
+  * fix rename
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 04 Nov 2009 17:31:27 +0100
+
+libeutils (0.7.24) claire estelle; urgency=low
+
+  * rename library to libeutils1
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 04 Nov 2009 16:05:54 +0100
+
+libeutils (0.7.23) estelle; urgency=low
+
+  * remove missing test code
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 04 Nov 2009 13:58:30 +0100
+
+libeutils (0.7.22) claire; urgency=low
+
+  [ Tor Krill ]
+  * More verbose error reporting
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 04 Nov 2009 12:25:08 +0100
+
+libeutils (0.7.20) claire; urgency=low
+
+  * enable LFS
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 28 Oct 2009 16:53:14 +0100
+
+libeutils (0.7.19) claire; urgency=low
+
+  * Added option to create file if missing in simplecfg
+  * Move SimpleCfg into EUtils namespace
+
+ -- Tor Krill <tor@excito.com>  Thu, 22 Oct 2009 15:33:14 +0200
+
+libeutils (0.7.18) karmic; urgency=low
+
+  * forgot the headerfile :(
+
+ -- Carl Fürstenberg <carl@excito.com>  Fri, 16 Oct 2009 17:26:41 +0200
+
+libeutils (0.7.17) claire; urgency=low
+
+  * ifdef on popt_arg_longlong as it was added in 1.14
+
+ -- Carl Fürstenberg <carl@excito.com>  Fri, 16 Oct 2009 17:03:14 +0200
+
+libeutils (0.7.16) estelle; urgency=low
+
+  * Add timeout option on server socket.
+  * Added NetDaemon and NetClient classes
+  * Added Services class
+
+ -- Tor Krill <tor@excito.com>  Fri, 02 Oct 2009 09:08:12 +0200
+
+libeutils (0.7.15) estelle; urgency=low
+
+  * Added POpt class
+  * Added SimpleCfg class
+  * Update headers
+
+ -- Tor Krill <tor@excito.com>  Sun, 13 Sep 2009 22:12:06 +0200
+
+libeutils (0.7.14) estelle; urgency=low
+
+  * Had wrong soname
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 19 Aug 2009 15:09:25 +0200
+
+libeutils (0.7.13) estelle; urgency=low
+
+  * rebuild makefiles
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 19 Aug 2009 14:10:25 +0200
+
+libeutils (0.7.12) estelle; urgency=low
+
+  * Added sysv classes
+
+ -- Tor Krill <tor@excito.com>  Thu, 13 Aug 2009 00:06:13 +0200
+
+libeutils (0.7.11) estelle; urgency=low
+
+  * remove rouge cerr and cout.
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 24 Jun 2009 13:17:27 +0200
+
+libeutils (0.7.10) estelle; urgency=low
+
+  * Fixed bug in get groups for user, hopefully partially fix #810, #824
+  * Add untested parse of ints in php session
+
+ -- Tor Krill <tor@excito.com>  Fri, 12 Jun 2009 12:13:16 +0200
+
+libeutils (0.7.9) estelle; urgency=low
+
+  * errorious mount instead of umount
+
+ -- Carl Fürstenberg <carl@excito.com>  Thu, 04 Jun 2009 15:59:37 +0200
+
+libeutils (0.7.8) estelle; urgency=low
+
+  * Use Process to call mount and umount
+
+ -- Carl Fürstenberg <carl@excito.com>  Thu, 04 Jun 2009 15:12:12 +0200
+
+libeutils (0.7.7) jaunty; urgency=low
+
+  * wrong order
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 06 May 2009 16:31:24 +0200
+
+libeutils (0.7.6) claire; urgency=low
+
+  * ignore any errors
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 06 May 2009 16:28:10 +0200
+
+libeutils (0.7.5) claire; urgency=low
+
+  * run fuser -kc before umount to kill 'em' all
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 06 May 2009 15:41:10 +0200
+
+libeutils (0.7.4) claire; urgency=low
+
+  * make umount lazy
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 06 May 2009 14:41:34 +0200
+
+libeutils (0.7.3) claire; urgency=low
+
+  * adding exit status for Process::call
+
+ -- Carl Fürstenberg <carl@excito.com>  Wed, 15 Apr 2009 16:12:29 +0200
+
+libeutils (0.7.2) claire; urgency=low
+
+  * Add Process class for simplified executing of external programs
+
+ -- Carl Fürstenberg <azatoth@gmail.com>  Thu, 09 Apr 2009 17:24:45 +0200
+
+libeutils (0.7.1) claire; urgency=low
+
+  * minor changes
+
+ -- Carl Fürstenberg <azatoth@gmail.com>  Thu, 02 Apr 2009 15:00:38 +0200
+
+libeutils (0.7.0) claire; urgency=low
+
+  * Initial release.
+
+ -- Carl Fürstenberg <carl@excito.com>  Sun, 29 Mar 2009 18:24:09 +0200
