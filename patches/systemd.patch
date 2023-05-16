@@ -1,0 +1,65 @@
+diff -ru a/Makefile b/Makefile
+--- a/Makefile	2023-05-16 15:28:54.109537929 +0200
++++ b/Makefile	2023-05-16 15:18:51.607499667 +0200
+@@ -10,13 +10,11 @@
+ 
+ FTD=ftd
+ FTD_SRC= CurlDownloader.cpp \
+-		 DirWatcher.cpp \
+ 		 Downloader.cpp \
+ 		 filetransferdaemon.cpp \
+ 		 FtdApp.cpp \
+ 		 FtdConfig.cpp \
+-		 SocketFdDownloader.cpp \
+-		 TorrentDownloader.cpp 
++		 SocketFdDownloader.cpp
+ 
+ FTDCLIENT=ftdclient
+ FTDCLIENT_SRC= ftdclient.cpp
+@@ -32,14 +30,13 @@
+ 
+ CXXFLAGS_EXTRA = -g -D_FILE_OFFSET_BITS=64  -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -D__STDC_FORMAT_MACROS -Wall \
+ 				 -DPACKAGE_VERSION="\"$(VERSION)\"" -DCFGPATH="\"$(CFGPATH)\"" \
+-				 $(shell pkg-config --cflags libtorrent-rasterbar libcurl glib-2.0) -I$(INCLUDEDIR)
++				 $(shell pkg-config --cflags libcurl glib-2.0) -I$(INCLUDEDIR)
+ 				 #-Wextra -Wold-style-cast -Woverloaded-virtual -Wsign-promo
+  
+-#LD_LIBTORRENT=-Wl,-Bstatic $(shell pkg-config --libs libtorrent-rasterbar geoip libssl) \
+-				#-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt -Wl,-Bdynamic
++#LD_LIBTORRENT=-Wl,-Bstatic $(shell pkg-config --libs geoip libssl) \
++				#-lboost_system -lboost_date_time -lboost_filesystem -lboost_thread -Wl,-Bdynamic
+ 
+-LD_LIBTORRENT= $(shell pkg-config --libs libtorrent-rasterbar) \
+-				-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt
++LD_LIBTORRENT=	-lboost_system -lboost_date_time -lboost_filesystem -lboost_thread
+ 
+ LDFLAGS_EXTRA = $(LIBDIR)/libeutils.a $(LIBDIR)/libsigc-2.0.a -lpthread  $(shell pkg-config --libs glib-2.0) $(shell curl-config --libs) -lpopt
+ 
+diff -ru a/src/filetransferdaemon.cpp b/src/filetransferdaemon.cpp
+--- a/src/filetransferdaemon.cpp	2023-05-16 12:42:44.000000000 +0200
++++ b/src/filetransferdaemon.cpp	2023-05-16 15:18:51.608499687 +0200
+@@ -25,7 +25,6 @@
+ #include "FtdConfig.h"
+ #include "Downloader.h"
+ #include "CurlDownloader.h"
+-#include "TorrentDownloader.h"
+ #include "SocketFdDownloader.h"
+ #include <libeutils/Socket.h>
+ #include "Commands.h"
+@@ -198,7 +197,6 @@
+ 		// Order is important here both curl and torrent downloader acccept the same scheme
+ 		fapp.AddFilter(&SocketFdDownloadManager::Instance());
+ 		fapp.AddFilter(&CurlDownloadManager::Instance());
+-		fapp.AddFilter(&TorrentDownloadManager::Instance());
+ 
+ 		Json::Reader reader;
+ 		do {
+@@ -284,7 +282,6 @@
+ 	if(do_shutdown){
+ 		syslog(LOG_NOTICE,"shutting down");
+ 		FtdApp::Instance().ShutDown();
+-		TorrentDownloadManager::Instance().Shutdown();
+ 		syslog(LOG_NOTICE,"terminating");
+ 	}
+     
+

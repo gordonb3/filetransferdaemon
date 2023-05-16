@@ -1,0 +1,36 @@
+diff -ru a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -41,7 +41,7 @@
+ 	message( FATAL_ERROR "popt was not found" )
+ endif( NOT HAVE_POPT_H )
+ 
+-pkg_check_modules ( SIGC++ sigc++-2.0>=2.0 )
++add_definitions( -Wno-psabi )
+ pkg_check_modules ( GLIB glib-2.0>=2.0 )
+ pkg_check_modules( TUT libtut )
+ 
+diff -ru a/libeutils/ECGI.cpp b/libeutils/ECGI.cpp
+--- a/libeutils/ECGI.cpp
++++ b/libeutils/ECGI.cpp
+@@ -194,7 +194,7 @@
+             this->parseFields( this->env["QUERY_STRING"] );
+         } else if ( requestmethod == "POST" ) {
+             if ( this->content_length > 0 ) {
+-                unsigned char* buffer = new unsigned char[this->content_length] + 1;
++                unsigned char* buffer = new unsigned char[this->content_length + 1];
+ 
+                 if ( read( this->fd, buffer, this->content_length ) != this->content_length ) {
+                     throw new runtime_error( "Failed to read post" );
+diff -ru a/libeutils.pc.cmake b/libeutils.pc.cmake
+--- a/libeutils.pc.cmake
++++ b/libeutils.pc.cmake
+@@ -7,6 +7,6 @@
+ Description: Excito library routines
+ Version: @VERSION@
+ Requires.private: sigc++-2.0, glib-2.0
+-Libs: -L${libdir} -leutils -lpopt -pthread
++Libs: -L${libdir} -leutils -lpopt -lpthread
+ Cflags: -I${includedir} -I${includedir}/tcl@TCL_VERSION@
+ 
+

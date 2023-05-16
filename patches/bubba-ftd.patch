@@ -1,0 +1,21 @@
+--- a/Makefile
++++ b/Makefile
+@@ -32,7 +32,7 @@
+ 
+ CXXFLAGS_EXTRA = -g -D_FILE_OFFSET_BITS=64  -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -D__STDC_FORMAT_MACROS -Wall \
+ 				 -DPACKAGE_VERSION="\"$(VERSION)\"" -DCFGPATH="\"$(CFGPATH)\"" \
+-				 $(shell pkg-config --cflags libeutils libtorrent-rasterbar sigc++-2.0 libcurl)
++				 $(shell pkg-config --cflags libtorrent-rasterbar libcurl glib-2.0) -I$(INCLUDEDIR)
+ 				 #-Wextra -Wold-style-cast -Woverloaded-virtual -Wsign-promo
+  
+ #LD_LIBTORRENT=-Wl,-Bstatic $(shell pkg-config --libs libtorrent-rasterbar geoip libssl) \
+@@ -41,7 +41,7 @@
+ LD_LIBTORRENT= $(shell pkg-config --libs libtorrent-rasterbar) \
+ 				-lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_thread-mt
+ 
+-LDFLAGS_EXTRA =  $(shell pkg-config --libs libeutils sigc++-2.0) $(shell curl-config --libs) -lpopt
++LDFLAGS_EXTRA = $(LIBDIR)/libeutils.a $(LIBDIR)/libsigc-2.0.a -lpthread  $(shell pkg-config --libs glib-2.0) $(shell curl-config --libs) -lpopt
+ 
+ FTD_OBJS=$(FTD_SRC:%.cpp=%.o)
+ FTDCLIENT_OBJS=$(FTDCLIENT_SRC:%.cpp=%.o)
+

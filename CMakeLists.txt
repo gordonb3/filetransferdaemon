@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.17)
 project( filetransferdaemon )
 
 # defaults
-option(WITH_SYSTEMD "Build for systemd init" NO)
 option(WITH_LIBTORRENT "Build with libtorrent support" NO)
 
 
@@ -31,7 +30,7 @@ add_custom_target(post-sigc++
 
 ExternalProject_Add(libeutils
   SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/static-libs/libeutils-0.7.39
-  PATCH_COMMAND     sed -e "/SIGC++/cadd_definitions( -Wno-psabi )" -i <SOURCE_DIR>/CMakeLists.txt -e "s/\-pthread/-lpthread/" -i <SOURCE_DIR>/libeutils.pc.cmake
+  PATCH_COMMAND     patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/patches/libeutils.patch
   CMAKE_ARGS        -DBUILD_STATIC_LIBRARIES=ON -DBUILD_SHARED_LIBRARIES=OFF -DCMAKE_INSTALL_PREFIX=${EXT_TARGET_DIR} -DSIGC++_CFLAGS=-I${EXT_TARGET_DIR}/include
   PREFIX            ${EXT_TEMP_DIR}
   DEPENDS           post-sigc++
@@ -43,29 +42,16 @@ string(REGEX REPLACE "/libexpect.*$" "" LIBEXPECTPATH ${LIBEXPECT})
 string(REGEX MATCH "expect.*$" LIBEXPECT ${LIBEXPECTPATH})
 message("Found lib${LIBEXPECT}.so at ${LIBEXPECTPATH}")
 
-# define sed replace strings for our patch command
-set(REPLACE1 [=["s/\-\-cflags.*$/--cflags libcurl glib-2.0) -I\$\(INCLUDEDIR\)/"]=])
-set(REPLACE2 [=["s/LDFLAGS_EXTRA =/LDFLAGS_EXTRA = \$\(LIBDIR\)\/libeutils.a \$\(LIBDIR\)\/libsigc-2.0.a -lpthread/"]=])
-set(REPLACE3 [=["s/\-lexpect/-L\$\(EXPECTDIR\) -Wl,-rpath,\$\(EXPECTDIR\) -l\$\(LIBEXPECT\)/"]=])
-set(REPLACE4 [=["s/\-mt//g"]=])
-set(REPLACE5 [=["s/\-\-libs libeutils sigc++-2.0/--libs glib-2.0/"]=])
 
-if(WITH_LIBTORRENT)
-  set(REPLACE6 [=["s/^//"]=])
-  set(REPLACE7 [=["s/^//"]=])
-  set(REPLACE8 [=["s/^//"]=])
-  set(REPLACE9 [=["s/^//"]=])
-else()
-  set(REPLACE6 [=["/TorrentDownload/d"]=])
-  set(REPLACE7 [=["/DirWatcher/d"]=])
-  set(REPLACE8 [=["s/libtorrent-rasterbar //g"]=])
-  set(REPLACE9 [=["s/^LD_LIBTORRENT.*$/LD_LIBTORRENT=\\\/"]=])
+set(FTD_PATCHFILE ${CMAKE_CURRENT_SOURCE_DIR}/patches/bubba-ftd.patch)
+
+if(NOT WITH_LIBTORRENT)
+  set(FTD_PATCHFILE ${FTD_PATCHFILE} ${CMAKE_CURRENT_SOURCE_DIR}/patches/systemd.patch)
 endif()
-
 
 ExternalProject_Add(bubba-ftd
   SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/bubba-ftd
-  PATCH_COMMAND     eval sed -e "${REPLACE1}" -e "${REPLACE2}" -e "${REPLACE3}" -e "${REPLACE4}" -e "${REPLACE5}" -e "${REPLACE6}" -e "${REPLACE7}" -e "${REPLACE8}" -e "${REPLACE9}" -i <SOURCE_DIR>/Makefile -i <SOURCE_DIR>/src/filetransferdaemon.cpp
+  PATCH_COMMAND     cat ${FTD_PATCHFILE} | patch -p1
   BUILD_IN_SOURCE   OFF
   CONFIGURE_COMMAND mkdir -p ${EXT_TARGET_DIR}${FTD_PREFIX}/sbin
   BUILD_COMMAND     make DEBV=0 INCLUDEDIR=${EXT_TARGET_DIR}/include LIBDIR=${EXT_TARGET_DIR}/lib EXPECTDIR=${LIBEXPECTPATH} LIBEXPECT=${LIBEXPECT} -C <SOURCE_DIR>
@@ -81,12 +67,4 @@ install(DIRECTORY ${EXT_TARGET_DIR}/opt ${EXT_TARGET_DIR}/usr ${EXT_TARGET_DIR}/
         PATTERN "*bin/*"
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ
        )
-
-if(WITH_SYSTEMD)
-  set(PATCHPATH ${CMAKE_CURRENT_SOURCE_DIR}/contrib/systemd)
-  add_custom_target(systemd-patch
-    COMMAND test -e ${EXT_TEMP_DIR}/systemd-patch.completed || RESULT=`cat ${PATCHPATH}/systemctl.patch ${PATCHPATH}/gnome-NetworkManager.patch | patch -p1 > ${EXT_TEMP_DIR}/systemd-patch.completed`
-  )
-   add_dependencies(sigc++ systemd-patch)
-endif()
 
