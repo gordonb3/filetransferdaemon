@@ -43,10 +43,10 @@ string(REGEX MATCH "expect.*$" LIBEXPECT ${LIBEXPECTPATH})
 message("Found lib${LIBEXPECT}.so at ${LIBEXPECTPATH}")
 
 
-set(FTD_PATCHFILE ${CMAKE_CURRENT_SOURCE_DIR}/patches/bubba-ftd.patch)
+set(FTD_PATCHFILE ${CMAKE_CURRENT_SOURCE_DIR}/patches/bubba-ftd.patch ${CMAKE_CURRENT_SOURCE_DIR}/patches/curl8.patch)
 
 if(NOT WITH_LIBTORRENT)
-  set(FTD_PATCHFILE ${FTD_PATCHFILE} ${CMAKE_CURRENT_SOURCE_DIR}/patches/systemd.patch)
+  set(FTD_PATCHFILE ${FTD_PATCHFILE} ${CMAKE_CURRENT_SOURCE_DIR}/patches/without-libtorrent.patch)
 endif()
 
 ExternalProject_Add(bubba-ftd
@@ -54,7 +54,7 @@ ExternalProject_Add(bubba-ftd
   PATCH_COMMAND     cat ${FTD_PATCHFILE} | patch -p1
   BUILD_IN_SOURCE   OFF
   CONFIGURE_COMMAND mkdir -p ${EXT_TARGET_DIR}${FTD_PREFIX}/sbin
-  BUILD_COMMAND     make DEBV=0 INCLUDEDIR=${EXT_TARGET_DIR}/include LIBDIR=${EXT_TARGET_DIR}/lib EXPECTDIR=${LIBEXPECTPATH} LIBEXPECT=${LIBEXPECT} -C <SOURCE_DIR>
+  BUILD_COMMAND     make DEBV=0 INCLUDEDIR=${EXT_TARGET_DIR}/include LIBDIR=${EXT_TARGET_DIR}/lib EXPECTDIR=${LIBEXPECTPATH} LIBEXPECT=${LIBEXPECT} CFGPATH=/etc/bubba/ftdconfig.ini -C <SOURCE_DIR>
   INSTALL_COMMAND   make DESTDIR=${EXT_TARGET_DIR} -C  <SOURCE_DIR> install
   PREFIX ${EXT_TEMP_DIR}
   DEPENDS libeutils
